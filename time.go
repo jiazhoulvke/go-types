@@ -1,6 +1,7 @@
 package types
 
 import (
+	"bytes"
 	"database/sql"
 	"database/sql/driver"
 	"errors"
@@ -147,6 +148,13 @@ func (t NullTime) MarshalJSON() ([]byte, error) {
 }
 
 func (t *NullTime) UnmarshalJSON(data []byte) error {
+	if bytes.Equal(data, []byte("null")) {
+		*t = NullTime{
+			t: time.Time{},
+			v: false,
+		}
+		return nil
+	}
 	n, err := strconv.ParseInt(string(data), 10, 64)
 	if err != nil {
 		return err
