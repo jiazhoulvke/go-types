@@ -15,6 +15,10 @@ func TimeOf(v time.Time) Time {
 	return Time(v)
 }
 
+func Now() Time {
+	return Time(time.Now())
+}
+
 func (t Time) Time() time.Time {
 	return time.Time(t)
 }
@@ -61,6 +65,12 @@ func (t Time) Value() (driver.Value, error) {
 type NullTime struct {
 	t time.Time
 	v bool
+}
+
+func NullTimeNow() NullTime {
+	var t NullTime
+	t.Set(time.Now())
+	return t
 }
 
 func NullTimeOf(v time.Time) NullTime {
@@ -159,7 +169,7 @@ func (t *NullTime) UnmarshalJSON(data []byte) error {
 	if err != nil {
 		return err
 	}
-	a := time.Unix(int64(n), 0)
+	a := time.Unix(n, 0)
 	tt := NullTime{
 		t: a,
 		v: n > 0,
