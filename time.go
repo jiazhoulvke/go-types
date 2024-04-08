@@ -1,6 +1,7 @@
 package types
 
 import (
+	"bytes"
 	"database/sql"
 	"database/sql/driver"
 	"errors"
@@ -12,6 +13,10 @@ type Time time.Time
 
 func TimeOf(v time.Time) Time {
 	return Time(v)
+}
+
+func Now() Time {
+	return Time(time.Now())
 }
 
 func (t Time) Time() time.Time {
@@ -60,6 +65,12 @@ func (t Time) Value() (driver.Value, error) {
 type NullTime struct {
 	t time.Time
 	v bool
+}
+
+func NullTimeNow() NullTime {
+	var t NullTime
+	t.Set(time.Now())
+	return t
 }
 
 func NullTimeOf(v time.Time) NullTime {
@@ -147,11 +158,18 @@ func (t NullTime) MarshalJSON() ([]byte, error) {
 }
 
 func (t *NullTime) UnmarshalJSON(data []byte) error {
+	if bytes.Equal(data, []byte("null")) {
+		*t = NullTime{
+			t: time.Time{},
+			v: false,
+		}
+		return nil
+	}
 	n, err := strconv.ParseInt(string(data), 10, 64)
 	if err != nil {
 		return err
 	}
-	a := time.Unix(int64(n), 0)
+	a := time.Unix(n, 0)
 	tt := NullTime{
 		t: a,
 		v: n > 0,

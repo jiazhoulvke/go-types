@@ -46,6 +46,10 @@ func TestNullTime(t *testing.T) {
 			T  NullTime `json:"t"`
 		}
 		var s1 ss
+		err = json.Unmarshal([]byte(`{"t":null}`), &s1)
+		So(err, ShouldBeNil)
+		err = json.Unmarshal([]byte("{}"), &s1)
+		So(err, ShouldBeNil)
 		err = json.Unmarshal([]byte(`{"t":1234}`), &s1)
 		So(err, ShouldBeNil)
 		So(s1.T.Timestamp(), ShouldEqual, 1234)
