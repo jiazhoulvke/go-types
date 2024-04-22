@@ -14,6 +14,10 @@ func TimestampOf(n int64) Timestamp {
 	return Timestamp(n)
 }
 
+func TimestampNow() Timestamp {
+	return Timestamp(time.Now().Unix())
+}
+
 func (t Timestamp) Time() time.Time {
 	return time.Unix(int64(t), 0)
 }
@@ -69,6 +73,13 @@ func NullTimestampOf(n int64) NullTimestamp {
 	return NullTimestamp{
 		valid: true,
 		t:     n,
+	}
+}
+
+func NullTimestampNow() NullTimestamp {
+	return NullTimestamp{
+		valid: true,
+		t:     time.Now().Unix(),
 	}
 }
 
