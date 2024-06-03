@@ -141,6 +141,10 @@ func strToTime(s string) (time.Time, error) {
 			return t, nil
 		}
 	}
+	n, err := strconv.ParseInt(s, 10, 64)
+	if err == nil {
+		return time.Unix(n, 0), nil
+	}
 	return time.Time{}, errors.New("convert time failed")
 }
 
