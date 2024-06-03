@@ -161,19 +161,29 @@ func (t *NullTimestamp) Scan(src any) error {
 		*t = NullTimestamp{}
 		return nil
 	}
-	tt, ok := src.(int64)
-	if !ok {
-		return errors.New("data format error")
-	}
-	if tt < 0 {
-		*t = NullTimestamp{}
+	switch v := src.(type) {
+	case []byte:
+		tt, err := strToTime(string(v))
+		if err != nil {
+			return err
+		}
+		*t = NullTimestampOf(tt.Unix())
+		return nil
+	case string:
+		tt, err := strToTime(v)
+		if err != nil {
+			return err
+		}
+		*t = NullTimestampOf(tt.Unix())
+		return nil
+	case time.Time:
+		*t = NullTimestampOf(v.Unix())
+		return nil
+	case int64:
+		*t = NullTimestampOf(v)
 		return nil
 	}
-	*t = NullTimestamp{
-		valid: true,
-		t:     tt,
-	}
-	return nil
+	return errors.New("data format error")
 }
 
 func (t NullTimestamp) Value() (driver.Value, error) {
