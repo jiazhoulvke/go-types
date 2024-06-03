@@ -126,14 +126,22 @@ func (t *NullTime) Scan(value any) error {
 	if !ns.Valid {
 		return nil
 	}
+	tt, err := strToTime(ns.String)
+	if err != nil {
+		return err
+	}
+	t.t = tt
+	t.v = true
+	return nil
+}
+
+func strToTime(s string) (time.Time, error) {
 	for _, tf := range timestampFormats {
-		if tt, err := time.Parse(tf, ns.String); err == nil {
-			t.t = tt
-			t.v = true
-			return nil
+		if t, err := time.Parse(tf, s); err == nil {
+			return t, nil
 		}
 	}
-	return nil
+	return time.Time{}, errors.New("convert time failed")
 }
 
 func (t NullTime) Value() (driver.Value, error) {

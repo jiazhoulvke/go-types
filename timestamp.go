@@ -52,12 +52,22 @@ func (t Timestamp) MarshalJSON() ([]byte, error) {
 }
 
 func (t *Timestamp) Scan(src any) error {
-	tt, ok := src.(int64)
-	if !ok {
-		return errors.New("data format error")
+	switch v := src.(type) {
+	case string:
+		tt, err := strToTime(v)
+		if err != nil {
+			return err
+		}
+		*t = Timestamp(tt.Unix())
+		return nil
+	case time.Time:
+		*t = Timestamp(v.Unix())
+		return nil
+	case int64:
+		*t = Timestamp(v)
+		return nil
 	}
-	*t = Timestamp(tt)
-	return nil
+	return errors.New("data format error")
 }
 
 func (t Timestamp) Value() (driver.Value, error) {
