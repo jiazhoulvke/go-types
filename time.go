@@ -49,6 +49,9 @@ func (t Time) MarshalJSON() ([]byte, error) {
 }
 
 func (t *Time) Scan(src any) error {
+	if src == nil {
+		return nil
+	}
 	tt, ok := src.(time.Time)
 	if !ok {
 		return errors.New("data format error")
@@ -115,6 +118,9 @@ var timestampFormats = []string{
 }
 
 func (t *NullTime) Scan(value any) error {
+	if value == nil {
+		return nil
+	}
 	t.t, t.v = value.(time.Time)
 	if t.v {
 		return nil

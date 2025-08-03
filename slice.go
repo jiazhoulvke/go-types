@@ -15,6 +15,9 @@ type Numeric interface {
 type NumericSlice[T Numeric] []T
 
 func (ss *NumericSlice[T]) Scan(value any) error {
+	if value == nil {
+		return nil
+	}
 	str, ok := value.(string)
 	if !ok {
 		return fmt.Errorf("data is not bytes")
@@ -46,6 +49,9 @@ func (ss NumericSlice[T]) Value() (driver.Value, error) {
 type StringSlice[T ~string] []T
 
 func (ss *StringSlice[T]) Scan(value any) error {
+	if value == nil {
+		return nil
+	}
 	str, ok := value.(string)
 	if !ok {
 		return fmt.Errorf("data is not bytes")

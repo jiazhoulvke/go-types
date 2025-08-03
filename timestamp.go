@@ -52,6 +52,9 @@ func (t Timestamp) MarshalJSON() ([]byte, error) {
 }
 
 func (t *Timestamp) Scan(src any) error {
+	if src == nil {
+		return nil
+	}
 	switch v := src.(type) {
 	case []byte:
 		tt, err := strToTime(string(v))

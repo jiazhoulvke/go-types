@@ -30,6 +30,9 @@ func (m Map[T1, T2]) JsonString() (string, error) {
 }
 
 func (d *Map[T1, T2]) Scan(value any) error {
+	if value == nil {
+		return nil
+	}
 	b, ok := value.([]byte)
 	if !ok {
 		return fmt.Errorf("data is not bytes")
